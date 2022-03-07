@@ -1,7 +1,6 @@
 ---
-layout: minimal
+layout: default
 title: Welcome to Jekyll!
-published: true
 ---
 
 # Welcome
@@ -14,6 +13,3 @@ The first set of posts (and probably a lot of them after that will probably be o
 - Commmodore 64 assembly language
 - Building a C64 BASIC compiler, 
 - and whatever else somes to mind.
-
-
-Touched! Again!
