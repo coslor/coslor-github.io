@@ -8,7 +8,7 @@ Unlike BASIC, assembly has several different types of things that you could use 
 
 **Registers** are memory built into the CPU to store values and perform operations. Some later CPUs have dozens of registers, for all kinds of uses. The 6502 has 5 single-byte registers 
 and one 16-bit register. They are:
-- The Program Counter or **PC** holds the 16-bit address of the currently-running instruction. As each instriction gets executed, the PC increments appropriately.
+- The Program Counter or **PC** holds the 16-bit address of the currently-running instruction. As each instruction gets executed, the PC increments appropriately.
 
 - The **Accumulator** is really the only general-purpose register. A typical fetch-modify-store cycle involves reading the contents of a memory address, modifying it (adding a constant value to it, for example), 
   and storing it back into that memory location. The accumulator is a single byte.
@@ -39,7 +39,7 @@ and one 16-bit register. They are:
     5: This flag is unused, except possibly in weird 6502 clones.
     
     6: The overflow, or **V** flag, is set when doing addition and subtraction of *signed* 8-bit numbers. This is a strange and possibly difficult subject so we'll be handing them later. You will 
-    also want to keep in mind that certail comparison operands can affect the V bit; again, we'll get to it. There are special instructions to set, clear, and check the V bit.
+    also want to keep in mind that certain comparison operands can affect the V bit; again, we'll get to it. There are special instructions to set, clear, and check the V bit.
     
     7: The Negative, or **N** flag is set when the result of a signed 8-bit arithmetic operation ends up negative. Yep, we'll get to it later.
     
@@ -58,7 +58,7 @@ INTERRUPT_REGISTER=$d019
 
 ### The Stack
 
-Here's where your mostly-forgotten computer classes come in. Long ago, you might have learned about the data structure known as a **stack** - a sort of container into whick you can *push* values, and then *pull* them out. A stack is a "Last In, First Out" structure, which is to say that the current value in the stack is always the one pushed in last, and the last value you can get from the stack is the first one you pushed in, just like a stack of plates or something. In this case, the most common use is for subroutines. Remember how in BASIC you could GOSUB to a spot in your program, and then when that code was finished, it could just RETURN back to where you called, wherever that was? Assembly has exactly the same thing, and the way it works, is that the GOSUB (or *JSR* for assembly) pushes the address of the call to the stack, and then the RETURN (or *RTS*) will pop the return address and go back there. The beauty of this method is that a subroutine can call another subroutine, which can then call a third. As long as everybody returns properly, it all just works. 
+Here's where your mostly-forgotten computer classes come in. Long ago, you might have learned about the data structure known as a **stack** - a sort of container into which you can *push* values, and then *pull* them out. A stack is a "Last In, First Out" structure, which is to say that the current value in the stack is always the one pushed in last, and the last value you can get from the stack is the first one you pushed in, just like a stack of plates or something. In this case, the most common use is for subroutines. Remember how in BASIC you could GOSUB to a spot in your program, and then when that code was finished, it could just RETURN back to where you called, wherever that was? Assembly has exactly the same thing, and the way it works, is that the GOSUB (or *JSR* for assembly) pushes the address of the call to the stack, and then the RETURN (or *RTS*) will pop the return address and go back there. The beauty of this method is that a subroutine can call another subroutine, which can then call a third. As long as everybody returns properly, it all just works. 
 
 There are also instructions to push and pull your own arbitrary values to the stack, to use it as temporary storage or a communication mechanism. One common example would be in s "SWAP(A,B)" routine: push the value of A to the stack, set a to the value of B, and set B to the value on the top of the stack. Another is to add *parameters* to subroutines. In this scenario, you might want to, again, set up our SWAP code. In BASIC, you would have to make A and B program-wide variables, and then call the subroutine:
 ```
@@ -68,7 +68,7 @@ GOSUB 8200
 V1=A
 V2=B
 ```
-This is kind of messy, isn't it? And what if, as you go to make changes three months later, you get the routine at 8200 mixed up with the one at 3400 and set B and C instead? In assembly, we can do something like this: (this is basically psuedocode, to give you the idea)
+This is kind of messy, isn't it? And what if, as you go to make changes three months later, you get the routine at 8200 mixed up with the one at 3400 and set B and C instead? In assembly, we can do something like this: (this is basically pseudocode, to give you the idea)
 ```
 PUSH V2
 PUSH V1
@@ -81,7 +81,7 @@ This can work a lot better, and be easier to keep track of, without making the S
 
 There are a few drawbacks to using the stack, though:
 1. There is only one stack, shared among your program and BASIC and the Kernal. Other machines may have very large stacks, but the 6502's is only 255 bytes max. It is *not* very hard to fill it up, and if it fills up, ***BOOM!*** It is possible to build your own stack using custom code, but that has drawbacks of its own.
-2. You have to be *very* careful that you pull everyting you push, and in the right order. If you're using the stack for temporary storage in a part of your code, and you forget and leave an extra byte or two sitting there when your routine is trying to RETURN, the CPU pulls what is supposed to be the return address off the top of the stack. Instead, it gets whatever random data you put in there, and, well, you guessed it, another ***BOOM!***
+2. You have to be *very* careful that you pull everything you push, and in the right order. If you're using the stack for temporary storage in a part of your code, and you forget and leave an extra byte or two sitting there when your routine is trying to RETURN, the CPU pulls what is supposed to be the return address off the top of the stack. Instead, it gets whatever random data you put in there, and, well, you guessed it, another ***BOOM!***
 3. The stack is quite a bit slower than registers, and usually slower than using **zero-page variables**.
 
 
@@ -107,11 +107,11 @@ The only way to modify memory with the 6502 is to load the contents of that memo
 
 ### Plain memory
 
-Alghough accessing plain old memory is the slowest of our methods, it is absolutely the most versatile. Assuming you're writing your own stand-alone program, you have almost complete control of how you want your memory to be organized and used. 
+Although accessing plain old memory is the slowest of our methods, it is absolutely the most versatile. Assuming you're writing your own stand-alone program, you have almost complete control of how you want your memory to be organized and used. 
 
-Pretty much all assemblers have memory allocation statements that tell the assembler how to organize the code and memory. (NOTE: if you don't remember your hexidecimal very well, find up a good reminder on the internet somewhere. It's just the most sensible way to describe 16-bit addresses. If nothing else, the calculator that comes with Windows, in Programmer mode, is a great tool to convert back & forth.) The start of the program usually looks something like this:
+Pretty much all assemblers have memory allocation statements that tell the assembler how to organize the code and memory. (NOTE: if you don't remember your hexadecimal very well, find up a good reminder on the internet somewhere. It's just the most sensible way to describe 16-bit addresses. If nothing else, the calculator that comes with Windows, in Programmer mode, is a great tool to convert back & forth.) The start of the program usually looks something like this:
 ```
-.*=$801                     ; start the program at the begining of the BASIC space. .ORG $801 would mean the same thing
+.*=$801                     ; start the program at the beginning of the BASIC space. .ORG $801 would mean the same thing
             .byte XX,YY,ZZ...   ; insert a bunch of bytes here that make BASIC think it's a regular program and execute it
 
 start:      jump to real_start
@@ -129,7 +129,7 @@ real_start:
 There are a few things to note here:
 1. Since the C64 starts up in BASIC, you usually need the first few bytes of your program to have the right values to be executed by BASIC. Of course, you don't need that if you are, for example, writing a game to be put on a cartridge.
 2. The program will start at the first memory location after the "camouflage". See how the first instruction is to jump over the memory allocations, to the start of the actual code? Unlike BASIC, machine code doesn't make any distinction between memory used to store variables and memory to store code, and if you're not careful, you'll put the CPU in the position of trying to execute your high score or shield percentage as program code. Guess what happens then? (That's right, another ***BOOM!***)
-3. While BASIC lets you create a new variable literally anywhere in your program, in assembly, you'll just about always want to define all of your variables at onec, all at the begining of the probgram. That having been said, there's nothing necessarily magical about the beginning of memory -- you could put all of your variables at the end, but many assemblers won't let you use a label it doesn't know about yet at that state of the assembly process, and will thus throw an error. Generally, the beginning the the best choice.
+3. While BASIC lets you create a new variable literally anywhere in your program, in assembly, you'll just about always want to define all of your variables at onec, all at the beginning of the program. That having been said, there's nothing necessarily magical about the beginning of memory -- you could put all of your variables at the end, but many assemblers won't let you use a label it doesn't know about yet at that state of the assembly process, and will thus throw an error. Generally, the beginning the the best choice.
 4. As a side note, note also the lack of line numbers. While numbered lines were a handy way for the BASIC interpreter to keep track of things, you'll almost certainly be using a PC with literally billions of bytes of memory, so you can use descriptive labels, cut and paste, all of that good stuff.
 
 So, to summarize, the types of storage you can use in your assembly program are:
