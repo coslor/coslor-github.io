@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: minimal
 title: Welcome to Jekyll!
 published: true
 ---
@@ -16,4 +16,4 @@ The first set of posts (and probably a lot of them after that will probably be o
 - and whatever else somes to mind.
 
 
-Touched!
+Touched! Again!
