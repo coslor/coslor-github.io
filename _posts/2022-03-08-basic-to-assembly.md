@@ -7,7 +7,6 @@
 |               | 
 
 [^1]: But what address does *AnswerToUniverse* actually represent? No, it's not 42; 42 is the value that is put into the address when the program first runs. So what is the address? The short answer is: don't worry about it, the assembler will take care of it and you'll almost never need to know the exact value, any more than you needed to know exactly what address a variable was held in, in BASIC. <br><br>
-
 If you still really want to know: it depends on *AnswerToUniverse*'s place in the overall program structure. For example, if the first few lines of the assembly file look like this: 
   <br><br>`*=$0801` 
   <br><br>`;-------------------` 
@@ -28,4 +27,4 @@ If you still really want to know: it depends on *AnswerToUniverse*'s place in th
   <br><br> `;--- the actual program ---`
   <br>`real_start:	lda #0`
   <br> (rest of program)
-  <br><br>...then what's the value of *AnswerToUniverse*? Well, in a real program the assembler will figure it for you, but just for fun, let's try it ourselves: start with the beginning address, which is $801 or 2049. Then count the bytes: the BASIC header is 14 bytes; the JMP is 3 bytes; the constants don't take up *any* space, since they're just labels; `var_8` takes 1 byte; `var_16` takes 2 bytes; and then there's **AnswerToTheUniverse**, which should be 2049+14+3+1+2=2069, or $815. So the *address* of *AnswerToTheUniverse* is **$815**, and the initial *value* in it is **42**.
+  <br><br>...then what's the value of *AnswerToUniverse*? Well, in a real program the assembler will figure it for you, but just for fun, let's try it ourselves: start with the  beginning address, which is $801 or 2049. Then count the bytes: the BASIC header is 14 bytes; the JMP is 3 bytes; the constants don't take up *any* space, since they're just labels; `var_8` takes 1 byte; `var_16` takes 2 bytes; and then there's **AnswerToTheUniverse**, which should be 2049+14+3+1+2=2069, or $815. So the *address* of *AnswerToTheUniverse* is **$815**, and the initial *value* in it is **42**.
