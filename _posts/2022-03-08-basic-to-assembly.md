@@ -9,12 +9,19 @@
 [^1]: But what address does *AnswerToUniverse* actually represent? No, it's not 42; 42 is the value that the address gets set to when the program first runs. So what is the address? The short answer is: don't worry about it, the assembler will take care of it and you'll almost never need to know the exact value, any more than you needed to know exactly what address a variable was held in, in BASIC. <br><br>
 The long answer is: it depends on *AnswerToUniverse*'s place in the overall program structure. For example, if the first few lines of the assembly file look like this: 
   <br><br>`*=$0801` 
-  <br><br>`;-------------------` <br>`; BASIC header` (see [here](https:google.com) for more info about the BASIC header) 
-  <br>`;-------------------` <br>`byte $0d,$08,$d9,$07,$9e,$20,$34,$39` <br>`byte $31,$35,$32,$00,$00,$00` 
-  <br><br>`;GOTO our actual program code` <br> `jmp real_start` 
-  <br><br>`; ---constants---` <br>`VIC2_start=$d800 ;constant` 
+  <br><br>`;-------------------` 
+  <br>`; BASIC header`                            (see [here](https:google.com) for more info about the BASIC header) 
+  <br>`;-------------------` 
+  <br>`.byte $0d,$08`                             BASIC link to next line address (that is empty in this case)
+  <br>`.byte $e6,$07`                             the line number, which can be any value you want but is often the year the program was written (2022 in this case)
+  <br>`.byte $9e,$20,'4','9','1','5'`             SYS  to start the program *FIXME: fix this address!*
+  <br>`.byte ,$32,$00,$00,$00`                    end of BASIC program
+  <br>`;-------------------` 
+  <br> `jmp real_start`                           GOTO our actual program code
+  <br><br>`; ---constants---` 
+  <br>`VIC2_start=$d800 ;constant` 
   <br><br>`;---variables---` 
-  <br>`var_8: .byte $00 ;a single-byte variable` 
-  <br>`var_16: .word $0000 ; a 2-byte variable` 
+  <br>`var_8: .byte $00`                          a single-byte variable
+  <br>`var_16: .word $0000`                       a 2-byte variable
   <br>`AnswerToUniverse: .byte 42` 
   <br><br>...then what's the value of *AnswerToUniverse*? Well, in a real program the assembler will figure it for you, but just for fun, let's try it ourselves: start with the beginning address, which is $801 or 2049. Then count the bytes: the BASIC header is 14 bytes; the JMP is 3 bytes; the constants don't take up *any* space, since they're just labels; `var_8` takes 1 byte; `var_16` takes 2 bytes; and then there's **AnswerToTheUniverse**, which should be 2049+14+3+1+2=2069, or $815. So the *address* of *AnswerToTheUniverse* is **$815**, and the initial *value* in it is **42**.
