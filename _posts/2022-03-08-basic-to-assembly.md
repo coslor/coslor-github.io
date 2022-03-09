@@ -1,10 +1,14 @@
 # Converting BASIC to Assembly
 
-|Type           |BASIC structure                |Assembly Version                       |Notes                                |
-|---------------|-------------------------------|---------------------------------------|-------------------------------------|
-| Variables     | `AU=42`                       | AnswerToUniverse:  .byte 42           | Defines the variable[^1], and loads it with the numeric value 42. Labels can be any length. AnswerToUniverse is a single byte, range -128 to 127 or 0-255 |
-|               | `AU=PEEK(42)`                 | `lda 42`<BR> `sta AnswerToUniverse`<BR> | Translation: "Load the current value of memory location 42 into the accumulator, and store it in the location represented by `AnswerToUniverse`."<br>Assumes that `AnswerToUniverse` has already been defined and is a single byte. Note also that this will overwrite anything previously in the accumulator. |
-|               | 
+|Type           |BASIC structure                |Assembly Version                             |Notes                                |
+|---------------|-------------------------------|---------------------------------------------|-------------------------------------|
+| Remarks       | `990 REM THE START OF THE PROGRAM` | `; The start of the program`           |                                     |
+|               | `GOSUB 1000:REM MAKE PEW PEW NOISE` | `jsr MakePewPewNoise ; makes pew pew noise, duh` | Anything after the semicolon on a line is ignored, unless it's inside quotes |
+| Variables & Memory | `AU=42` (the first definition of *AU*) | `AnswerToUniverse: .byte 42`       | Defines the variable[^1], and loads it with the numeric value 42. Labels can be any length. AnswerToUniverse is a single byte, range -128 to 127 or 0-255 |
+|               | `AU=17` (after AU has been defined) | `lda #17`<br>`sta AnswerToUniverse`   |                                     |
+|               | `AU=PEEK(53281)`              | `lda 53281` <br>`sta AnswerToUniverse`<BR>  | Translation: "Load the current value of memory location 53280 (could also be written as $d020) into the accumulator, and store it in the location represented by `AnswerToUniverse`."<br>Assumes that `AnswerToUniverse` has already been defined and is a single byte. Note also that this will overwrite anything previously in the accumulator. |
+|               | `POKE 53280,6`                | `lda #6` <br>`sta 53280`                    | Actually, it would be more common to use something like:<br>`lda #COLOR_BLUE`<br>`sta BORDER_COLOR`<br>...where COLOR_BLUE and BORDER_COLOR are constants that have been defined earlier in the program.<br>Another little note: constants are traditionally all in upper case. This isn't required, but it helps distinguish between constants and variable labels. |
+| Comparisons   | `IF D<=3 THEN GOSUB 1000:SC=SC+1:GOTO 1300` | `lda DistToRock` <br>`cmp #MIN_DISTANCE` <br>`bne no_boom` <br>`jsr MakeBoomNoise`<br>`inc Score` <br>`jmp NextRock` | You haven't seen some of these operands yet, but hopefully you get the idea. Notice that we've restructured the code a little in the assembly version so that, instead of executing the remainder of the line if the distance *is* less than or equal to the minimum distance, we jump to other code if it *isn't*, and then describe what to do otherwise. |
 
 [^1]: But what address does *AnswerToUniverse* actually represent? No, it's not 42; 42 is the value that is put into the address when the program first runs. So what is the address? The short answer is: don't worry about it, the assembler will take care of it and you'll almost never need to know the exact value, any more than you needed to know exactly what address a variable was held in, in BASIC. <br><br>
 If you still really want to know: it depends on *AnswerToUniverse*'s place in the overall program structure. For example, if the first few lines of the assembly file look like this: 
